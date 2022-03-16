@@ -2,19 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Activity;
+use App\Models\ActivityTime;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-class ActivityController extends ResponseController
+class ActivityTimeController extends ResponseController
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    
     protected $user;
     
     public function __construct()
@@ -28,11 +26,7 @@ class ActivityController extends ResponseController
 
     public function index()
     {
-        $activities = Activity::with(["activity_times"])
-            ->orderBy('id', 'DESC')
-            ->where('user_id', "=", $this->user->id)
-            ->get(["id", "description"]);
-        return $this->sendRes($activities, "Lista de actividades");
+        //
     }
 
     /**
@@ -53,15 +47,17 @@ class ActivityController extends ResponseController
      */
     public function store(Request $request)
     {
+        // return $this->sendRes($request->all(), "Tiempo de actividad registrado", 201);
         try {
-            $activity = new Activity();
-            $activity->description =  $request->description;
-            $activity->user_id = $this->user->id;
-            $activity->save();
+            $activityTime = new ActivityTime();
+            $activityTime->date =  $request->date;
+            $activityTime->time_hour = $request->time_hour;
+            $activityTime->activity_id = $request->activity_id;
+            $activityTime->save();
         } catch (\Throwable $th) {
-            return $this->sendError("Actividad no registrada revisa los datos");
+            return $this->sendError("Tiempo de actividad no registrado revisa los datos ".$th);
         }
-        return $this->sendRes($activity, "Actividad registrada", 201);
+        return $this->sendRes($activityTime, "Tiempo de actividad registrado", 201);
     }
 
     /**
@@ -70,7 +66,7 @@ class ActivityController extends ResponseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($slug)
+    public function show($id)
     {
         //
     }
@@ -95,20 +91,7 @@ class ActivityController extends ResponseController
      */
     public function update(Request $request, $id)
     {
-        try {
-            $activity = Activity::find($id);
-
-            if ($activity != null) {
-                $activity->description =  $request->description;
-                $activity->save();
-            }else{
-                return $this->sendRes([], "Actividad no encontrado");
-            }
-        } catch (\Throwable $th) {
-            return $this->sendError("Actividad no actualizada revisa los datos");
-        }
-
-        return $this->sendRes($activity, "Actividad actualizada", 201);
+        //
     }
 
     /**
@@ -120,16 +103,16 @@ class ActivityController extends ResponseController
     public function destroy($id)
     {
         try {
-            $activity = Activity::find($id);
+            $activityTime = ActivityTime::find($id);
             
-            if ($activity != null) {
-                $activity->delete();
+            if ($activityTime != null) {
+                $activityTime->delete();
             } else {
-                return $this->sendRes([], "Actividad no encontrada");
+                return $this->sendRes([], "Tiempo de actividad no encontrado");
             }
         } catch (\Throwable $th) {
-            return $this->sendError("Error al eliminar la actividad");
+            return $this->sendError("Error al eliminar el tiempo de actividad");
         }
-        return $this->sendRes($activity, "Actividad eliminada", 201);
+        return $this->sendRes($activityTime, "Tiempo de actividad eliminado", 201);
     }
 }

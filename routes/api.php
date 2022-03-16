@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\ActivityTimeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,4 +28,5 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::post('user','App\Http\Controllers\UserController@getAuthenticatedUser');
 
     Route::resource('activity', ActivityController::class);
+    Route::resource('activityTime', ActivityTimeController::class);
 });
