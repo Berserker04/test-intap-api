@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\ActivityTimeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +16,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+Route::post('register', 'App\Http\Controllers\UserController@register');
+Route::post('login', 'App\Http\Controllers\UserController@authenticate');
+
+Route::group(['middleware' => ['jwt.verify']], function() {
+
+    Route::post('user','App\Http\Controllers\UserController@getAuthenticatedUser');
+
+    Route::resource('activity', ActivityController::class);
+    Route::resource('activityTime', ActivityTimeController::class);
 });
